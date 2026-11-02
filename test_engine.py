@@ -48,6 +48,20 @@ class TestEngine(unittest.TestCase):
         self.assertEqual(porcentagem(Decimal("15")), Decimal("0.15"))
         # 20% de 50 = 10
         self.assertEqual(porcentagem(Decimal("20"), Decimal("50")), Decimal("10"))
+        # 15% de 200 = 30
+        self.assertEqual(porcentagem(Decimal("15"), Decimal("200")), Decimal("30"))
+
+    def test_calcular_porcentagem_completa(self):
+        res = calcular("15", "200", "%")
+        self.assertTrue(res["sucesso"])
+        self.assertEqual(res["resultado_formatado"], "30")
+        self.assertEqual(res["expressao"], "15% de 200 = 30")
+        self.assertIn("etapa1", res["explicacao_passos"])
+
+    def test_calcular_porcentagem_invalida(self):
+        res = calcular("15", "texto_invalido", "%")
+        self.assertFalse(res["sucesso"])
+        self.assertIn("Operando B inválido", res["erro"])
 
     def test_formatacao_milhar(self):
         self.assertEqual(formatar_numero(Decimal("1234567"), separador_milhar=True), "1.234.567")

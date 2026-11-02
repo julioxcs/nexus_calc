@@ -134,12 +134,12 @@ def modulo(a: Decimal) -> Decimal:
 def porcentagem(a: Decimal, b: Optional[Decimal] = None) -> Decimal:
     """
     Cálculo de porcentagem:
-    - Se apenas 'a' for fornecido: converte a em fração (a / 100).
-    - Se 'a' e 'b' forem fornecidos: calcula a% de b ((b * a) / 100).
+    - Se apenas 'a' for fornecido: converte a em fração (a / Decimal('100')).
+    - Se 'a' e 'b' forem fornecidos: calcula a% de b: (a / Decimal('100')) * b.
     """
     if b is None:
-        return a / Decimal(100)
-    return (b * a) / Decimal(100)
+        return a / Decimal('100')
+    return (a / Decimal('100')) * b
 
 
 # ==============================================================================
@@ -185,7 +185,10 @@ def calcular(
 
     # Operações unárias (que usam apenas um número)
     op_clean = operacao.strip()
-    is_unaria = op_clean in ("√", "sqrt", "1/x", "inv", "|x|", "abs", "%", "porcento")
+    is_unaria = (op_clean in ("√", "sqrt", "1/x", "inv", "|x|", "abs")) or (
+        op_clean in ("%", "porcento", "Porcentagem", "% Porcentagem", "% (Porcentagem)")
+        and (num2_raw is None or str(num2_raw).strip() == "")
+    )
 
     b: Optional[Decimal] = None
     str_b = ""
@@ -216,7 +219,11 @@ def calcular(
         "sqrt": ("√", "Raiz Quadrada"),
         "1/x": ("1/x", "Inverso"),
         "|x|": ("|x|", "Módulo"),
-        "%": ("%", "Porcentagem")
+        "%": ("%", "Porcentagem"),
+        "Porcentagem": ("%", "Porcentagem"),
+        "porcentagem": ("%", "Porcentagem"),
+        "% Porcentagem": ("%", "Porcentagem"),
+        "% (Porcentagem)": ("%", "Porcentagem")
     }
 
     if op_clean not in mapa_ops:
@@ -271,11 +278,19 @@ def calcular(
             if b is not None:
                 res = porcentagem(a, b)
                 expressao = f"{str_a}% de {str_b}"
-                trecho = f"resultado = ({str_b} * {str_a}) / 100"
+                trecho = (
+                    "def porcentagem(a: Decimal, b: Decimal) -> Decimal:\n"
+                    "    return (a / Decimal('100')) * b\n\n"
+                    f"resultado = porcentagem(Decimal('{str_a}'), Decimal('{str_b}'))"
+                )
             else:
                 res = porcentagem(a)
                 expressao = f"{str_a}%"
-                trecho = f"resultado = {str_a} / 100"
+                trecho = (
+                    "def porcentagem(a: Decimal) -> Decimal:\n"
+                    "    return a / Decimal('100')\n\n"
+                    f"resultado = porcentagem(Decimal('{str_a}'))"
+                )
         else:
             resposta["erro"] = "Operação não implementada."
             return resposta
@@ -285,6 +300,22 @@ def calcular(
         resposta["resultado"] = res
         resposta["resultado_formatado"] = str_res
         resposta["expressao"] = f"{expressao} = {str_res}"
+
+        # Descrições dinâmicas para o painel didático
+        if simbolo == "%":
+            desc_etapa3 = (
+                f"A aplicação identificou a operação de Porcentagem ('%').\n"
+                f"Ramo executado: `elif operacao == '%':`"
+            )
+            desc_etapa4 = (
+                f"A função executou o cálculo percentual utilizando Decimal:\n"
+                f"Fórmula: `(a / Decimal('100')) * b` com os valores ({str_a} / 100) * {str_b} = {str_res}."
+                if b is not None else
+                f"Fórmula: `a / Decimal('100')` com o valor {str_a} / 100 = {str_res}."
+            )
+        else:
+            desc_etapa3 = f"A instrução condicional correspondente `if operacao == '{simbolo}':` foi atendida com sucesso."
+            desc_etapa4 = "A função aritmética pura foi acionada com os valores reais da sessão."
 
         # Metadados Didáticos
         resposta["explicacao_passos"] = {
@@ -307,13 +338,13 @@ def calcular(
             "etapa3": {
                 "titulo": "Etapa 3 — Estrutura de Decisão",
                 "conceito": "Controle de Fluxo (if / elif)",
-                "descricao": f"A instrução condicional correspondente `if operacao == '{simbolo}':` foi atendida com sucesso.",
+                "descricao": desc_etapa3,
                 "codigo": f"if operacao == '{simbolo}':\n    # Ramo executado com sucesso\n    resultado = {nome.lower()}(...)"
             },
             "etapa4": {
                 "titulo": "Etapa 4 — Cálculo em Python",
                 "conceito": "Funções Puras & Operadores",
-                "descricao": f"A função aritmética pura foi acionada com os valores reais da sessão.",
+                "descricao": desc_etapa4,
                 "codigo": trecho
             },
             "etapa5": {

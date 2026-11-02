@@ -108,6 +108,7 @@ with st.sidebar:
         ("100 ÷ 4", "100", "4", "÷", "Divisão exata"),
         ("-5 + 12", "-5", "12", "+", "Operação com número negativo"),
         ("7,5 × 2", "7.5", "2", "×", "Operação com número decimal"),
+        ("15 % de 200", "15", "200", "%", "Cálculo de porcentagem: 15% de 200 = 30"),
         ("10 ÷ 0", "10", "0", "÷", "Divisão por zero (Tratamento seguro) ⚠️"),
         ("2 ^ 8", "2", "8", "^", "Potenciação (2 elevado a 8)"),
         ("√144", "144", None, "√", "Raiz quadrada de 144")
@@ -278,8 +279,8 @@ with col_chassis:
                 pressionar_unaria("|x|")
                 st.rerun()
         with s5:
-            if st.button("%", help="Porcentagem de x", use_container_width=True):
-                pressionar_unaria("%")
+            if st.button("%", help="Porcentagem: Operando A % de Operando B", use_container_width=True):
+                pressionar_operador("%")
                 st.rerun()
 
         st.markdown("<div style='margin-bottom: 6px;'></div>", unsafe_allow_html=True)
@@ -389,11 +390,48 @@ with col_chassis:
         with c_a:
             v_a = st.text_input("Operando A", value=st.session_state.campo_num1, key="fld_a")
         with c_op:
-            ops_disponiveis = ["+", "-", "×", "÷", "^", "%"]
+            ops_disponiveis = ["+", "-", "×", "÷", "%", "^"]
             idx_op = ops_disponiveis.index(st.session_state.campo_op) if st.session_state.campo_op in ops_disponiveis else 0
-            v_op = st.selectbox("Operador", ops_disponiveis, index=idx_op, key="fld_op")
+            v_op = st.selectbox(
+                "Operador",
+                ops_disponiveis,
+                index=idx_op,
+                format_func=lambda x: {
+                    "+": "+ (Adição)",
+                    "-": "- (Subtração)",
+                    "×": "× (Multiplicação)",
+                    "÷": "÷ (Divisão)",
+                    "%": "% (Porcentagem)",
+                    "^": "^ (Potência)"
+                }.get(x, x),
+                key="fld_op"
+            )
         with c_b:
             v_b = st.text_input("Operando B", value=st.session_state.campo_num2, key="fld_b")
+
+        # Seletor Direto de Operações Rápidas
+        st.markdown("<div style='font-size: 0.75rem; color: #94a3b8; margin: 8px 0 4px 0; font-weight: 600;'>SELETOR DIRETO:</div>", unsafe_allow_html=True)
+        q1, q2, q3, q4, q5 = st.columns(5)
+        with q1:
+            if st.button("+ Adição", use_container_width=True, key="fld_btn_add"):
+                st.session_state.campo_op = "+"
+                st.rerun()
+        with q2:
+            if st.button("- Subtração", use_container_width=True, key="fld_btn_sub"):
+                st.session_state.campo_op = "-"
+                st.rerun()
+        with q3:
+            if st.button("× Multiplicação", use_container_width=True, key="fld_btn_mul"):
+                st.session_state.campo_op = "×"
+                st.rerun()
+        with q4:
+            if st.button("÷ Divisão", use_container_width=True, key="fld_btn_div"):
+                st.session_state.campo_op = "÷"
+                st.rerun()
+        with q5:
+            if st.button("% Porcentagem", use_container_width=True, key="fld_btn_pct"):
+                st.session_state.campo_op = "%"
+                st.rerun()
 
         b_exec, b_clr = st.columns([2, 1])
         with b_exec:
