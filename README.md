@@ -4,7 +4,7 @@
   <img src="https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python 3.11+" />
   <img src="https://img.shields.io/badge/Streamlit-1.30+-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white" alt="Streamlit" />
   <img src="https://img.shields.io/badge/Engine-Decimal%20Precision-06B6D4?style=for-the-badge" alt="Decimal Engine" />
-  <img src="https://img.shields.io/badge/Tests-17%20Passed-10B981?style=for-the-badge" alt="17 Tests Passed" />
+  <img src="https://img.shields.io/badge/Tests-19%20Passed-10B981?style=for-the-badge" alt="19 Tests Passed" />
   <img src="https://img.shields.io/badge/License-MIT-blue?style=for-the-badge" alt="MIT License" />
 </p>
 
@@ -18,6 +18,23 @@
 O **NEXUS CALC** foi desenvolvido como solução de destaque para um desafio acadêmico de **Introdução à Inteligência Artificial Aplicada ao Desenvolvimento de Software**. 
 
 O objetivo central é demonstrar, na prática, como conceitos fundamentais da ciência da computação — alocação de variáveis, precisão numérica com `Decimal`, estruturas condicionais de controle de fluxo (`if/elif/else`), modularização em funções puras e tratamento de exceções com `try/except` — articulam-se para construir um produto de software robusto, resiliente e visualmente sofisticado.
+
+### 🎓 Desafios Acadêmicos Integrados
+
+Este repositório foi estruturado para demonstrar a evolução contínua do software através de dois desafios avaliativos:
+
+* **Desafio 1 — Núcleo Aritmético & Modo Didático:**
+  - Implementação das 4 operações fundamentais (`+`, `-`, `×`, `÷`) em funções puras sem uso de `eval()`.
+  - Tratamento rigoroso de exceções (prevenção contra divisão por zero e sanitização de entradas).
+  - Precisão numérica garantida com a biblioteca padrão `decimal.Decimal`.
+  - Painel pedagógico ("Dissecação do Algoritmo") com as 5 etapas da mecânica interna do Python.
+  - Histórico de sessão via `st.session_state` e testes unitários automatizados (`test_calculadora.py`).
+
+* **Desafio 2 — Evolução Profissional & Cálculo Percentual:**
+  - Interface estilo Hardware Virtual com display LCD retroiluminado, contraste WCAG AA e teclado tátil.
+  - Implementação da operação de **Porcentagem binária** (`Operando A % de Operando B = C`) via fórmula Decimal: `(a / Decimal('100')) * b`.
+  - Inclusão do Seletor Direto de operações, atalho rápido de teste (`15 % de 200 = 30`) e suporte a atalhos do teclado do computador (`Enter`, `Esc`, `Backspace`).
+  - Registros completos de memória (`MC`, `MR`, `M+`, `M−`), exportação CSV e expansão da suíte para **19 testes unitários aprovados**.
 
 ---
 
