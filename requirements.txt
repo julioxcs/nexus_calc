@@ -1,0 +1,4 @@
+# Dependências do Projeto NEXUS CALC
+# Python 3.11 ou superior recomendado
+
+streamlit>=1.30.0
